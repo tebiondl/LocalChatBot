@@ -1,0 +1,5 @@
+{
+    "model_name": "llama3.2",
+    "cache_dir": "/app/model_cache"
+}
+  
