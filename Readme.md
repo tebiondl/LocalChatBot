@@ -4,7 +4,7 @@ The reason that this repository exist is to test how podman works and create a c
 
 ### NEEDED INSTALLATIONS
 
-You need podman CLI installed. It is available in their website.
+You need any container engine, here I use podman, but any can be used. If you use podman, you need podman CLI installed. It is available in their website.
 
 ### How to run?
 
