@@ -1,6 +1,6 @@
 ## OBJECTIVE
 
-The reason that this repository exist is to test how podman works and create a container that holds an API with a text generative AI ([Llama-3.2-1B-Instruct](https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct)).
+The reason that this repository exist is to test how to build an API with a Text Generative AI ([Llama-3.2-1B-Instruct](https://huggingface.co/meta-llama/Llama-3.2-1B-Instruct)) using containers, specifically, Podman.
 
 ### NEEDED INSTALLATIONS
 
