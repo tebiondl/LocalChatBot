@@ -4,15 +4,15 @@ The reason that this repository exist is to test how to build an API with a Text
 
 ### NEEDED INSTALLATIONS
 
-You need podman CLI installed. It is available in their website.
+You need any container engine, here I use podman, but any can be used. If you use podman, you need podman CLI installed. It is available in their website.
 
 ### How to run?
 
-Follow the next steps
+Follow the next steps. If you use another container engine, change the podman coman to that engine one.
 
 #### 1. Create secret
 
-You need to create a secret with this structure:
+You need to create a secret with this structure. The token you need to add is the hugging face token that can be generated in their website.
 
     {
         "hf_token": "YOUR_TOKEN"
