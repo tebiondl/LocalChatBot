@@ -8,7 +8,11 @@ You need any container engine, here I use podman, but any can be used. If you us
 
 ### How to run?
 
-Follow the next steps. If you use another container engine, change the podman command to that engine one.
+You have the option to use containers or just run it locally. To run locally run the next command:
+
+    python app_files/app.py
+
+To use containers, follow the next steps. If you use another container engine, change the podman command to that engine one.
 
 #### 1. Create secret
 

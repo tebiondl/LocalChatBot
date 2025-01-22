@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from transformers import pipeline
+from transformers import pipeline, AutoModelForCausalLM, AutoTokenizer
 import os
 import torch
 from dotenv import load_dotenv
@@ -8,7 +8,11 @@ import json
 load_dotenv()
 
 # Load env variables
-secrets_path = os.getenv("SECRETS_PATH")
+if os.path.exists(os.getenv("LOCAL_SECRETS_PATH")):
+    secrets_path = os.getenv("LOCAL_SECRETS_PATH")
+else:
+    secrets_path = os.getenv("SECRETS_PATH")
+    
 try:
     with open(secrets_path, "r") as f:
         secrets = json.load(f)
@@ -25,13 +29,21 @@ model_id = os.getenv("MODEL_ID")
 
 try:
     # Load model
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    
+    model = AutoModelForCausalLM.from_pretrained(
+        model_id, torch_dtype=torch.bfloat16 if device == "cuda" else torch.float32
+    )
+    
+    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    
     pipe = pipeline(
         "text-generation",
-        model=model_id,
-        torch_dtype=torch.bfloat16 if torch.cuda.is_available() else torch.float32,
-        device_map="auto",
+        model=model,
+        tokenizer=tokenizer, 
+        device=0 if device == "cuda" else -1,
         token=hf_token
-        )
+    )
 except Exception as e:
     raise RuntimeError(f"Error loading the model: {e}")
 
@@ -55,10 +67,44 @@ def generate_text():
         if not isinstance(prompt, str) or not prompt.strip():
             return jsonify({"error": "Prompt must be a non-empty string"}), 400
     
-        outputs = pipe(prompt, max_new_tokens=256, num_return_sequences=1)
+        outputs = pipe(prompt, num_return_sequences=1)
         generated_text = outputs[0]["generated_text"]
             
         return jsonify({"generated_text": generated_text})
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+'''
+Request Type: POST
+Input Data: {"*": "Any existant parameter for an specific model configuration"}
+Output Data: {"A good message if the configuration was applied"}
+'''
+@app.route("/change_config", methods=["POST"])
+def change_config():
+    global pipe, model, tokenizer
+    try:
+        # Get data from the request
+        data = request.get_json()
+
+        # It checks if the model config has this specific configutrations
+        for key, value in data.items():
+            if hasattr(model.config, key):
+                setattr(model.config, key, value)
+            else:
+                raise ValueError(f"Invalid config key: {key}")
+            
+        # Refresh pipeline
+        pipe = pipeline(
+            "text-generation",
+            model=model,
+            tokenizer=tokenizer, 
+            device=0 if device == "cuda" else -1,
+            token=hf_token
+        )
+            
+        return jsonify("Applied Configuration")
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
