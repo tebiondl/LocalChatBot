@@ -8,7 +8,11 @@ You need any container engine, here I use podman, but any can be used. If you us
 
 ### How to run?
 
-You have the option to use containers or just run it locally. To run locally run the next command:
+You have the option to use containers or just run it locally. To run locally first install the requirements using the next command:
+
+    pip install -r app_files/requirements.txt
+
+Then you can run the API with:
 
     python app_files/app.py
 
